@@ -1,26 +1,23 @@
 const express = require('express');
+require('dotenv').config({ path: './creds.env' }); // Load environment variables
+const passport = require('./passport'); // Ensure correct path
+const authRoutes = require('./routes/auth');
+const inventoryRoutes = require('./routes/inventory');
+const bodyParser = require('body-parser');
+const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 8000;
-const pool = require('./database'); // Import the database connection
+const JWT_SECRET = process.env.JWT_SECRET; // Define JWT_SECRET here
 
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({ secret: JWT_SECRET, resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
-// Test route to check if the server is running
-app.get('/', (req, res) => {
-    res.send('InStock backend is running!');
-});
+app.use('/auth', authRoutes);
+app.use('/inventory', inventoryRoutes);
 
-// Example route to fetch data from PostgreSQL
-app.get('/data', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM Inventory');
-        res.json(result.rows);
-    } catch (err) {
-        console.error('Error executing query', err.stack);
-        res.status(500).send('Server Error');
-    }
-});
+app.get('/', (req, res) => res.send('InStock backend is running!'));
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
