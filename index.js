@@ -1,13 +1,13 @@
 const express = require('express');
-require('dotenv').config({ path: './creds.env' }); // Load environment variables
-const passport = require('./passport'); // Ensure correct path
+require('dotenv').config({ path: './creds.env' });
+const passport = require('./passport');
 const authRoutes = require('./routes/auth');
 const inventoryRoutes = require('./routes/inventory');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 8000;
-const JWT_SECRET = process.env.JWT_SECRET; // Define JWT_SECRET here
+const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
