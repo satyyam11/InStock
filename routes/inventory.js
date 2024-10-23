@@ -1,5 +1,13 @@
 const express = require('express');
-const { getInventory, createItem, updateItem, deleteItem, importCSV, exportCSV } = require('../controllers/inventoryController');
+const {
+    getInventory,
+    createItem,
+    updateItem,
+    deleteItem,
+    importCSV,
+    exportCSV,
+    searchItems, 
+} = require('../controllers/inventoryController');
 const router = express.Router();
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
@@ -7,6 +15,7 @@ const authenticateUser = require('../config/authenticateUser');
 
 // Protect routes with authenticateUser middleware
 router.get('/', authenticateUser, getInventory);
+router.get('/search', authenticateUser, searchItems); // Add search route
 router.post('/', authenticateUser, createItem);
 router.put('/:id', authenticateUser, updateItem);
 router.delete('/:id', authenticateUser, deleteItem);

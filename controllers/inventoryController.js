@@ -112,4 +112,48 @@ const exportCSV = async (req, res) => {
     }
 };
 
-module.exports = { getInventory, createItem, updateItem, deleteItem, importCSV, exportCSV};
+// Search inventory items
+const searchItems = async (req, res) => {
+    const { name, category, minPrice, maxPrice } = req.query;
+    const userId = req.user.id; // Get user ID for filtering
+
+    // Build the query
+    let query = 'SELECT * FROM inventory WHERE user_id = $1';
+    const params = [userId];
+
+    // Add filters based on provided query parameters
+    if (name) {
+        query += ' AND name ILIKE $' + (params.length + 1); // Case-insensitive search
+        params.push(`%${name}%`);
+    }
+    if (category) {
+        query += ' AND category = $' + (params.length + 1);
+        params.push(category);
+    }
+    if (minPrice) {
+        query += ' AND price >= $' + (params.length + 1);
+        params.push(minPrice);
+    }
+    if (maxPrice) {
+        query += ' AND price <= $' + (params.length + 1);
+        params.push(maxPrice);
+    }
+
+    try {
+        const result = await pool.query(query, params);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+};
+
+module.exports = {
+    getInventory,
+    createItem,
+    updateItem,
+    deleteItem,
+    importCSV,
+    exportCSV,
+    searchItems, 
+};
