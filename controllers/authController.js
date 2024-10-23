@@ -62,3 +62,25 @@ exports.logout = (req, res) => {
     req.logout();
     res.send('Logged out successfully');
 };
+
+// Change password
+exports.changePassword = async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id; // Assume user ID is available in req.user (set by authenticateUser middleware)
+
+    try {
+        const user = await pool.query('SELECT * FROM Users WHERE id = $1', [userId]);
+        if (user.rowCount === 0) return res.status(400).send('User not found');
+
+        const validPassword = await bcrypt.compare(currentPassword, user.rows[0].password);
+        if (!validPassword) return res.status(400).send('Invalid current password');
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        await pool.query('UPDATE Users SET password = $1 WHERE id = $2', [hashedNewPassword, userId]);
+
+        res.send('Password changed successfully');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+};
