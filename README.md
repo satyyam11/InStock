@@ -6,7 +6,7 @@ InStock is a real-time inventory management system designed to help businesses t
 
 - **Monitor Inventory Levels**: View real-time stock levels to avoid stockouts or overstocking.
 - **Implemented Oauth**: Easy Login through Google.
-- **CRUD Operations on Products**: Add, update, and delete product entries seamlessly.
+- **CRUD Operations on Products**: Add, update, and delete product entries seamlessly also has search functionality
 - **Data Import**: Upload csv file to import data.
 - **Data Export**: Export csv file to download data.
 - **REST API for Frontend Integration**: Provide easy access to inventory data through APIs.
